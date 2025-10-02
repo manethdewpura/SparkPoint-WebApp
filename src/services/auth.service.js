@@ -5,45 +5,31 @@ import {
   loginSuccess,
   loginFailure,
   logout,
-  updateAccessToken,
 } from "../store/authSlice";
 
 const API_URL = import.meta.env.VITE_BASE_URL;
 
-const api = axios.create({ baseURL: import.meta.env.VITE_BASE_URL });
+// Axios client configured to use proxy and send httpOnly cookies
+const api = axios.create({ baseURL: "/api", withCredentials: true });
 
 export const login = async (loginData) => {
   // Dispatch login start action
   store.dispatch(loginStart());
 
   try {
-    const response = await fetch(`${API_URL}/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(loginData),
-      credentials: "include", // Include cookies for refresh token
+    const { data } = await api.post(`/auth/login`, loginData, {
+      headers: { "Content-Type": "application/json" },
+      withCredentials: true,
     });
 
-    const data = await response.json();
-
-    if (response.ok && data.accessToken) {
-      // Set default Authorization header for future requests
-      api.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${data.accessToken}`;
-
-      // Dispatch login success action with user data and token
+    if (data?.user) {
       store.dispatch(
         loginSuccess({
           user: data.user,
-          accessToken: data.accessToken,
         })
       );
     } else {
-      // Dispatch login failure action
-      store.dispatch(loginFailure(data.message || "Login failed"));
+      store.dispatch(loginFailure(data?.message || "Login failed"));
     }
 
     return data;
@@ -61,30 +47,24 @@ export const logoutUser = async () => {
     const userId = state.auth.user?.id;
 
     if (userId) {
-      // Send logout request to server
-      await fetch(`${API_URL}/auth/logout`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${state.auth.accessToken}`,
-        },
-        body: JSON.stringify({ userId }),
-        credentials: "include",
-      });
+      // Send logout request to server (cookie-based)
+      await api.post(
+        `/auth/logout`,
+        { userId },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     // Clear Redux state
     store.dispatch(logout());
-
-    // Clear Authorization header
-    delete api.defaults.headers.common["Authorization"];
 
     return { success: true };
   } catch (error) {
     console.error("Logout error:", error);
     // Still clear local state even if server request fails
     store.dispatch(logout());
-    delete api.defaults.headers.common["Authorization"];
     return { success: false, error: error.message };
   }
 };
@@ -98,30 +78,23 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const res = await axios.post(
-          `${import.meta.env.VITE_BASE_URL}/auth/refresh`,
-          {},
-          { withCredentials: true }
+        const state = store.getState();
+        const userId = state?.auth?.user?.id;
+        await axios.post(
+          `/api/auth/refresh`,
+          { userId },
+          {
+            withCredentials: true,
+            headers: { "Content-Type": "application/json" },
+          }
         );
-        const newAccessToken = res.data.accessToken;
-
-        // Update Redux store
-        store.dispatch(updateAccessToken(newAccessToken));
-
-        api.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${newAccessToken}`;
-        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
-
-        return api(originalRequest); // retry
+        return api(originalRequest); // retry with refreshed cookie
       } catch (refreshError) {
         // refresh failed → force logout
         console.error("Token refresh failed:", refreshError);
 
-        // Dispatch logout action
+        // Dispatch logout action and let UI handle navigation
         store.dispatch(logout());
-
-        window.location.href = "/login";
       }
     }
 
