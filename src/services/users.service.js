@@ -1,5 +1,5 @@
 import api from "./auth.service";
-import store from "../store/Store";
+import store from "../store/store";
 
 export const registerAdmin = async (adminData) => {
   try {

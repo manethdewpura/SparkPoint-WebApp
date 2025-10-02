@@ -20,22 +20,28 @@ const AdminSignupPage = () => {
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  // Handle success navigation with cleanup
+  useEffect(() => {
+    if (success) {
+      const timeoutId = setTimeout(() => {
+        navigate("/admin");
+      }, 2000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [success, navigate]);
+
   // Check if user is authenticated as admin on component mount
   useEffect(() => {
-    console.log("Auth check - User:", user);
-    console.log("Is authenticated:", isAuthenticated);
-
     // Check if user exists and has admin role
     if (!isAuthenticated || !user?.id) {
       setError("You must be logged in to register new admins.");
-      setTimeout(() => {
-        navigate("/");
-      }, 3000);
+      navigate("/");
+      return;
     } else if (user.roleId !== 1 && user.role !== 1 && user.Role !== 1) {
       setError("Only administrators can register new admins.");
-      setTimeout(() => {
-        navigate("/admin");
-      }, 3000);
+      navigate("/admin");
+      return;
     }
   }, [navigate, isAuthenticated, user]);
 
@@ -69,10 +75,7 @@ const AdminSignupPage = () => {
         Password: "",
       });
 
-      // Redirect to admin management after 2 seconds
-      setTimeout(() => {
-        navigate("/admin/management");
-      }, 2000);
+      // Navigation will be handled by useEffect with proper cleanup
     } catch (error) {
       setError(error.message || "Registration failed. Please try again.");
     } finally {
@@ -81,7 +84,7 @@ const AdminSignupPage = () => {
   };
 
   const handleCancel = () => {
-    navigate("/admin/management");
+    navigate("/admin");
   };
 
   return (

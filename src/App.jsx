@@ -3,7 +3,6 @@ import { Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import AdminSignupPage from "./pages/admin/AdminSignupPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminManagementPage from "./pages/admin/AdminManagementPage";
 import StationOperatorDashboard from "./pages/stationOperator/StationOperatorDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -16,14 +15,6 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={[1]}>
               <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/management"
-          element={
-            <ProtectedRoute allowedRoles={[1]}>
-              <AdminManagementPage />
             </ProtectedRoute>
           }
         />
