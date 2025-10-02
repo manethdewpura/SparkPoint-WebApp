@@ -7,9 +7,6 @@ export const registerAdmin = async (adminData) => {
     const state = store.getState();
     const user = state.auth.user;
 
-    console.log("User role:", user?.roleId || user?.role || user?.Role);
-    console.log("Admin data:", adminData);
-
     // Check if user is admin
     if (
       !user?.id ||
@@ -26,8 +23,7 @@ export const registerAdmin = async (adminData) => {
       LastName: adminData.LastName,
       Password: adminData.Password,
     });
-
-    console.log("Registration successful:", response.data);
+    
     return response.data;
   } catch (error) {
     console.error("Admin registration failed:", error);
