@@ -54,7 +54,7 @@ export default function LoginPage() {
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
         <form onSubmit={onSubmit} className="space-y-4">
           <input
-            type="username"
+            type="text"
             name="username"
             placeholder="Username"
             value={formData.username}
