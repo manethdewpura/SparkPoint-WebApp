@@ -148,7 +148,10 @@ export default function Sidebar({ userType = "Admin" }) {
                 <button className="w-full text-left text-white hover:text-gray-300 py-2 px-3 rounded hover:bg-gray-700 transition-colors">
                   EV Owner Management
                 </button>
-                <button className="w-full text-left text-white hover:text-gray-300 py-2 px-3 rounded hover:bg-gray-700 transition-colors">
+                <button
+                  onClick={() => navigate("/admin/stations")}
+                  className="w-full text-left text-white hover:text-gray-300 py-2 px-3 rounded hover:bg-gray-700 transition-colors"
+                >
                   Stations Management
                 </button>
               </>

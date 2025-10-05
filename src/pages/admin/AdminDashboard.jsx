@@ -2,14 +2,14 @@ import Sidebar from "../../components/Sidebar";
 
 export default function AdminDashboard() {
   return (
-    <div className="min-h-screen bg-[#051238]">
+    <div className="min-h-screen bg-[#1a2955]">
       <Sidebar userType="Admin" />
 
       <main className="pt-16 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center text-white py-20">
             <h1 className="text-4xl font-bold mb-4">
-              🚀 Welcome to SparkPoint Admin Dashboard
+              Welcome to SparkPoint Admin Dashboard
             </h1>
             <p className="text-gray-300 text-lg">
               Manage your charging stations and users from here
