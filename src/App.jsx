@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import ChargingStations from "./pages/admin/chargingStation/ChargingStations";
 import StationDetails from "./pages/admin/chargingStation/StationDetails";
 import RegisterStationOperator from "./pages/admin/stationOperator/RegisterStationOperator";
+import StationOperators from "./pages/admin/stationOperator/StationOperators";
 
 function App() {
   return (
@@ -58,6 +59,14 @@ function App() {
         element={
           <ProtectedRoute allowedRoles={[1]}>
             <RegisterStationOperator />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/station-operators"
+        element={
+          <ProtectedRoute allowedRoles={[1]}>
+            <StationOperators />
           </ProtectedRoute>
         }
       />

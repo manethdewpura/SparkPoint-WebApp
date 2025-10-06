@@ -6,6 +6,7 @@ import {
   toggleStationStatus,
 } from "../../../services/chargingstations.service";
 import Sidebar from "../../../components/Sidebar";
+import { formatLocation } from "../../../utils/locationUtils";
 
 const ChargingStations = () => {
   const navigate = useNavigate();
@@ -122,13 +123,7 @@ const ChargingStations = () => {
                           <span className="font-medium text-white">
                             Location:
                           </span>{" "}
-                          {typeof station.location === "object" &&
-                          station.location !== null
-                            ? station.location.latitude &&
-                              station.location.longitude
-                              ? `${station.location.latitude}, ${station.location.longitude}`
-                              : JSON.stringify(station.location)
-                            : station.location || "N/A"}
+                          {formatLocation(station.location)}
                         </p>
                         <p className="text-gray-300 text-sm">
                           <span className="font-medium text-white">Type:</span>{" "}
@@ -177,7 +172,7 @@ const ChargingStations = () => {
                               : "bg-green-600 hover:bg-green-700 text-white"
                           }`}
                           onClick={() =>
-                            handleToggleStatus(station._id, station.isActive)
+                            handleToggleStatus(station.id, station.isActive)
                           }
                         >
                           {station.isActive ? "Deactivate" : "Activate"}

@@ -4,6 +4,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FiArrowLeft, FiMapPin, FiUsers, FiActivity } from "react-icons/fi";
 import { getStationById } from "../../../services/chargingstations.service";
 import Sidebar from "../../../components/Sidebar";
+import { formatLocation } from "../../../utils/locationUtils";
 
 const StationDetails = () => {
   const { id } = useParams();
@@ -176,7 +177,9 @@ const StationDetails = () => {
                   <label className="block text-sm font-medium text-gray-400 mb-1">
                     Total Slots
                   </label>
-                  <p className="text-white text-lg">{station.totalSlots || 0}</p>
+                  <p className="text-white text-lg">
+                    {station.totalSlots || 0}
+                  </p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">
@@ -207,12 +210,7 @@ const StationDetails = () => {
                     Coordinates
                   </label>
                   <p className="text-white">
-                    {typeof station.location === "object" &&
-                    station.location !== null
-                      ? station.location.latitude && station.location.longitude
-                        ? `${station.location.latitude}, ${station.location.longitude}`
-                        : JSON.stringify(station.location)
-                      : station.location || "N/A"}
+                    {formatLocation(station.location)}
                   </p>
                 </div>
                 <div>
@@ -279,8 +277,20 @@ const StationDetails = () => {
                   Station Operators ({station.stationUsers?.length || 0})
                 </h2>
                 <button
-                  onClick={handleRegisterOperator}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+                  onClick={
+                    station.isActive ? handleRegisterOperator : undefined
+                  }
+                  disabled={!station.isActive}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                    station.isActive
+                      ? "bg-green-600 hover:bg-green-700 text-white"
+                      : "bg-gray-500 text-gray-300 cursor-not-allowed"
+                  }`}
+                  title={
+                    !station.isActive
+                      ? "Station must be active to add operators"
+                      : ""
+                  }
                 >
                   + Add Operator
                 </button>
@@ -332,16 +342,26 @@ const StationDetails = () => {
                     No operators assigned to this station
                   </p>
                   <button
-                    onClick={handleRegisterOperator}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+                    onClick={
+                      station.isActive ? handleRegisterOperator : undefined
+                    }
+                    disabled={!station.isActive}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                      station.isActive
+                        ? "bg-blue-600 hover:bg-blue-700 text-white"
+                        : "bg-gray-500 text-gray-300 cursor-not-allowed"
+                    }`}
+                    title={
+                      !station.isActive
+                        ? "Station must be active to add operators"
+                        : ""
+                    }
                   >
                     Register First Operator
                   </button>
                 </div>
               )}
             </div>
-
-            
           </div>
         </div>
       </main>
