@@ -34,8 +34,15 @@ export const login = async (loginData) => {
 
     return data;
   } catch (error) {
+    // Extract the actual error message from server response
+    const errorMessage =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      "Network error";
+
     // Dispatch login failure action on error
-    store.dispatch(loginFailure(error.message || "Network error"));
+    store.dispatch(loginFailure(errorMessage));
     throw error;
   }
 };

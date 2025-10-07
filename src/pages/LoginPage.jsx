@@ -46,12 +46,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#051238]">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-6 text-[#051238]">
-          SparkPoint Login
-        </h1>
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+    <div className="min-h-screen flex items-center justify-center bg-[#1a2955]">
+      <div className="bg-gray-800 p-8 rounded-2xl shadow-lg w-full max-w-md border border-gray-700">
+        <div className="text-center text-white mb-8">
+          <div className="flex justify-center mb-4">
+            <img src="/logo.png" alt="SparkPoint Logo" className="w-16 h-16" />
+          </div>
+          <h1 className="text-3xl font-bold mb-2">SparkPoint Login</h1>
+          <p className="text-gray-300">Access your dashboard</p>
+        </div>
+        {error && (
+          <div className="mb-4 p-3 bg-red-900/50 border border-red-700 rounded-lg">
+            <p className="text-red-300 text-sm">{error}</p>
+          </div>
+        )}
         <form onSubmit={onSubmit} className="space-y-4">
           <input
             type="text"
@@ -59,7 +67,7 @@ export default function LoginPage() {
             placeholder="Username"
             value={formData.username}
             onChange={onChange}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7600]"
+            className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff7600] focus:border-transparent"
           />
           <div className="relative">
             <input
@@ -68,12 +76,12 @@ export default function LoginPage() {
               placeholder="Password"
               value={formData.password}
               onChange={onChange}
-              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7600] pr-12"
+              className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff7600] focus:border-transparent pr-12"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-300"
             >
               {showPassword ? (
                 <AiOutlineEyeInvisible className="h-5 w-5" />
@@ -84,7 +92,7 @@ export default function LoginPage() {
           </div>
           <button
             type="submit"
-            className="w-full bg-[#ff7600] text-white font-semibold py-3 rounded-lg hover:bg-orange-600 transition"
+            className="w-full bg-[#ff7600] text-white font-semibold py-3 rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50"
             disabled={loading}
           >
             {loading ? "Logging in..." : "Login"}
