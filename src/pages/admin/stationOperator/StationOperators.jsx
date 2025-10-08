@@ -254,9 +254,6 @@ const StationOperators = () => {
                           Status
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                          Station Name
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                           Registered At
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
@@ -297,11 +294,6 @@ const StationOperators = () => {
                               }`}
                             >
                               {operator.isActive ? "Active" : "Inactive"}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="text-sm font-medium text-gray-300">
-                              {operator.chargingStation?.name || "N/A"}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -485,7 +477,7 @@ const StationOperators = () => {
                       </div>
                     </div>
 
-                    {/* <div className="space-y-4">
+                    <div className="space-y-4">
                       <div>
                         <label className="text-sm font-medium text-gray-500 uppercase tracking-wider">
                           Station ID
@@ -497,7 +489,7 @@ const StationOperators = () => {
 
                       <div>
                         <label className="text-sm font-medium text-gray-500 uppercase tracking-wider">
-                          Created At
+                          Registered At
                         </label>
                         <p className="mt-1 text-gray-900">
                           {new Date(
@@ -506,13 +498,13 @@ const StationOperators = () => {
                             year: "numeric",
                             month: "long",
                             day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
+                            // hour: "2-digit",
+                            // minute: "2-digit",
                           })}
                         </p>
                       </div>
 
-                      <div>
+                      {/* <div>
                         <label className="text-sm font-medium text-gray-500 uppercase tracking-wider">
                           Last Updated
                         </label>
@@ -527,8 +519,8 @@ const StationOperators = () => {
                             minute: "2-digit",
                           })}
                         </p>
-                      </div>
-                    </div> */}
+                      </div> */}
+                    </div>
                   </div>
 
                   {/* Charging Station Details */}
