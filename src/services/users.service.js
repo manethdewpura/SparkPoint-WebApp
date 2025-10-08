@@ -23,7 +23,7 @@ export const registerAdmin = async (adminData) => {
       LastName: adminData.LastName,
       Password: adminData.Password,
     });
-    
+
     return response.data;
   } catch (error) {
     console.error("Admin registration failed:", error);
@@ -38,6 +38,27 @@ export const registerAdmin = async (adminData) => {
     } else {
       throw new Error(
         error.response?.data?.message || error.message || "Registration failed"
+      );
+    }
+  }
+};
+
+export const getUserProfile = async () => {
+  try {
+    const response = await api.get("/users/profile");
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch user profile:", error);
+
+    if (error.response?.status === 401) {
+      throw new Error("Authentication failed. Please log in again.");
+    } else if (error.response?.status === 403) {
+      throw new Error("Access denied.");
+    } else {
+      throw new Error(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to fetch profile"
       );
     }
   }

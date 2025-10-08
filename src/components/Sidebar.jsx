@@ -1,30 +1,22 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/authSlice";
 import { useNavigate } from "react-router-dom";
 import { HiMenu, HiX, HiLogout } from "react-icons/hi";
-import Cookies from "js-cookie";
 
-export default function Sidebar({ userType = "Admin" }) {
+export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Get user data from cookies
-  const getUserData = () => {
-    try {
-      const userData = Cookies.get("userData");
-      return userData ? JSON.parse(userData) : {};
-    } catch {
-      return {};
-    }
-  };
+  // Get user data from Redux auth slice
+  const { user } = useSelector((state) => state.auth);
 
-  const user = getUserData();
-  const firstName = user.firstName || "";
-  const lastName = user.lastName || "";
+  const firstName = user?.firstName || "";
+  const lastName = user?.lastName || "";
   const fullName = `${firstName} ${lastName}`.trim();
+  const userType = user?.roleId || 2;
 
   const handleLogout = () => {
     dispatch(logout());
@@ -53,7 +45,7 @@ export default function Sidebar({ userType = "Admin" }) {
         <div className="flex items-center gap-2">
           <img src="/logo.png" alt="SparkPoint Logo" className="w-8 h-8" />
           <h1 className="text-white text-xl font-semibold">
-            SparkPoint {userType}
+            SparkPoint {userType === 1 ? "Admin" : "Station Operator"}
           </h1>
         </div>
 
@@ -81,17 +73,25 @@ export default function Sidebar({ userType = "Admin" }) {
         <div className="fixed top-16 right-4 z-50 bg-white rounded-lg shadow-lg border border-gray-200 py-2 w-48">
           <div className="px-4 py-2 border-b border-gray-200">
             <p className="font-medium text-gray-900">{fullName || "User"}</p>
-            <p className="text-sm text-gray-500">{userType}</p>
+            <p className="text-sm text-gray-500">
+              {userType === 1 ? "Admin" : "Station Operator"}
+            </p>
           </div>
-          <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors">
-            Profile Settings
+          <button
+            onClick={() => {
+              navigate("/profile");
+              setShowProfileMenu(false);
+            }}
+            className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+          >
+            Profile
           </button>
-          <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors">
+          {/* <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors">
             Account
           </button>
           <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors">
             Preferences
-          </button>
+          </button> */}
         </div>
       )}
 
@@ -134,7 +134,7 @@ export default function Sidebar({ userType = "Admin" }) {
               Dashboard
             </button>
 
-            {userType === "Admin" && (
+            {userType === 1 && (
               <>
                 <button className="w-full text-left text-white hover:text-gray-300 py-2 px-3 rounded hover:bg-gray-700 transition-colors">
                   Booking Management
@@ -163,13 +163,19 @@ export default function Sidebar({ userType = "Admin" }) {
               </>
             )}
 
-            {userType === "Station Operator" && (
+            {userType === 2 && (
               <>
-                <button className="w-full text-left text-white hover:text-gray-300 py-2 px-3 rounded hover:bg-gray-700 transition-colors">
-                  My Station
-                </button>
-                <button className="w-full text-left text-white hover:text-gray-300 py-2 px-3 rounded hover:bg-gray-700 transition-colors">
+                <button
+                  onClick={() => navigate("/bookings")}
+                  className="w-full text-left text-white hover:text-gray-300 py-2 px-3 rounded hover:bg-gray-700 transition-colors"
+                >
                   Bookings
+                </button>
+                <button
+                  onClick={() => navigate("/station-operator/my-station")}
+                  className="w-full text-left text-white hover:text-gray-300 py-2 px-3 rounded hover:bg-gray-700 transition-colors"
+                >
+                  My Station
                 </button>
               </>
             )}

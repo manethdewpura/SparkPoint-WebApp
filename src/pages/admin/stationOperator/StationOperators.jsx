@@ -85,7 +85,6 @@ const StationOperators = () => {
       setShowModal(true);
       const operatorData = await getStationOperatorById(operatorId);
       setSelectedOperator(operatorData);
-      console.log("Selected Operator:", operatorData);
     } catch (error) {
       setError(error.message || "Failed to fetch operator details");
       setShowModal(false);
@@ -157,14 +156,13 @@ const StationOperators = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentOperators = operators.slice(indexOfFirstItem, indexOfLastItem);
-  console.log("Current Operators:", currentOperators);
   const totalPages = Math.ceil(operators.length / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div className="min-h-screen bg-[#1a2955]">
-      <Sidebar userType="Admin" />
+      <Sidebar />
 
       <main className="pt-16 pb-8 px-6">
         <div className="max-w-7xl mx-auto">

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { login } from "../services/auth.service";
+import { login } from "../../services/auth.service";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ username: "", password: "" });

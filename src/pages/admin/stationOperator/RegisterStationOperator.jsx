@@ -103,7 +103,7 @@ const RegisterStationOperator = () => {
 
   return (
     <div className="min-h-screen bg-[#1a2955]">
-      <Sidebar userType="Admin" />
+      <Sidebar />
 
       <main className="pt-16 pb-8 px-6">
         <div className="max-w-2xl mx-auto">
