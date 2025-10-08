@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 
-import LoginPage from "./pages/LoginPage";
+import LoginPage from "./pages/Auth/LoginPage";
 import AdminSignupPage from "./pages/admin/AdminSignupPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import StationOperatorDashboard from "./pages/stationOperator/StationOperatorDashboard";
@@ -9,6 +9,9 @@ import ChargingStations from "./pages/admin/chargingStation/ChargingStations";
 import StationDetails from "./pages/admin/chargingStation/StationDetails";
 import RegisterStationOperator from "./pages/admin/stationOperator/RegisterStationOperator";
 import StationOperators from "./pages/admin/stationOperator/StationOperators";
+import Profile from "./pages/Auth/Profile";
+import MyStation from "./pages/stationOperator/MyStation";
+import Bookings from "./pages/bookings/Bookings";
 
 function App() {
   return (
@@ -67,6 +70,30 @@ function App() {
         element={
           <ProtectedRoute allowedRoles={[1]}>
             <StationOperators />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute allowedRoles={[1, 2]}>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bookings"
+        element={
+          <ProtectedRoute allowedRoles={[1, 2]}>
+            <Bookings />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/station-operator/my-station"
+        element={
+          <ProtectedRoute allowedRoles={[2]}>
+            <MyStation />
           </ProtectedRoute>
         }
       />

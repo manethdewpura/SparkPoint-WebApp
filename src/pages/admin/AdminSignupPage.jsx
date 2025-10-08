@@ -89,7 +89,7 @@ const AdminSignupPage = () => {
 
   return (
     <div className="min-h-screen bg-[#1a2955]">
-      <Sidebar userType="Admin" />
+      <Sidebar />
 
       <div className="flex-1 ml-0">
         <main className="pt-16 px-6">

@@ -53,7 +53,7 @@ const StationDetails = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#1a2955]">
-        <Sidebar userType="Admin" />
+        <Sidebar />
         <main className="pt-16 pb-8 px-6">
           <div className="flex justify-center items-center min-h-[60vh]">
             <div className="flex items-center gap-3 text-white">
@@ -69,7 +69,7 @@ const StationDetails = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-[#1a2955]">
-        <Sidebar userType="Admin" />
+        <Sidebar />
         <main className="pt-16 pb-8 px-6">
           <div className="max-w-4xl mx-auto">
             <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
@@ -90,7 +90,7 @@ const StationDetails = () => {
   if (!station) {
     return (
       <div className="min-h-screen bg-[#1a2955]">
-        <Sidebar userType="Admin" />
+        <Sidebar />
         <main className="pt-16 pb-8 px-6">
           <div className="max-w-4xl mx-auto">
             <div className="bg-gray-800 p-8 rounded-lg border border-gray-700 text-center">
@@ -110,7 +110,7 @@ const StationDetails = () => {
 
   return (
     <div className="min-h-screen bg-[#1a2955]">
-      <Sidebar userType="Admin" />
+      <Sidebar />
 
       <main className="pt-16 pb-8 px-6">
         <div className="max-w-7xl mx-auto">
