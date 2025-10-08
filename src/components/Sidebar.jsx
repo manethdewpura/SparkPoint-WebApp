@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/authSlice";
 import { useNavigate } from "react-router-dom";
 import { HiMenu, HiX, HiLogout } from "react-icons/hi";
+import { ROLES, ROLE_NAMES } from "../constants/roles";
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,7 +17,7 @@ export default function Sidebar() {
   const firstName = user?.firstName || "";
   const lastName = user?.lastName || "";
   const fullName = `${firstName} ${lastName}`.trim();
-  const userType = user?.roleId || 2;
+  const userType = user?.roleId || ROLES.STATION_OPERATOR;
 
   const handleLogout = () => {
     dispatch(logout());
@@ -45,7 +46,7 @@ export default function Sidebar() {
         <div className="flex items-center gap-2">
           <img src="/logo.png" alt="SparkPoint Logo" className="w-8 h-8" />
           <h1 className="text-white text-xl font-semibold">
-            SparkPoint {userType === 1 ? "Admin" : "Station Operator"}
+            SparkPoint {ROLE_NAMES[userType]}
           </h1>
         </div>
 
@@ -73,9 +74,7 @@ export default function Sidebar() {
         <div className="fixed top-16 right-4 z-50 bg-white rounded-lg shadow-lg border border-gray-200 py-2 w-48">
           <div className="px-4 py-2 border-b border-gray-200">
             <p className="font-medium text-gray-900">{fullName || "User"}</p>
-            <p className="text-sm text-gray-500">
-              {userType === 1 ? "Admin" : "Station Operator"}
-            </p>
+            <p className="text-sm text-gray-500">{ROLE_NAMES[userType]}</p>
           </div>
           <button
             onClick={() => {
@@ -134,7 +133,7 @@ export default function Sidebar() {
               Dashboard
             </button>
 
-            {userType === 1 && (
+            {userType === ROLES.ADMIN && (
               <>
                 <button className="w-full text-left text-white hover:text-gray-300 py-2 px-3 rounded hover:bg-gray-700 transition-colors">
                   Booking Management
@@ -163,7 +162,7 @@ export default function Sidebar() {
               </>
             )}
 
-            {userType === 2 && (
+            {userType === ROLES.STATION_OPERATOR && (
               <>
                 <button
                   onClick={() => navigate("/bookings")}

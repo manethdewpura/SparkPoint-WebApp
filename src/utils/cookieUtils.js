@@ -36,5 +36,5 @@ export const deleteCookie = (name) => {
   const isSecure = window.location.protocol === "https:";
   const secureFlag = isSecure ? ";secure" : "";
 
-  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/${secureFlag}`;
+  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/${secureFlag};samesite=strict`;
 };
