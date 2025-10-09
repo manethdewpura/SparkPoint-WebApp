@@ -186,7 +186,7 @@ const StationDetails = () => {
                     Operating Hours
                   </label>
                   <p className="text-white">
-                    {station.operatingHours || "6:00 AM - 12:00 PM"}
+                    {station.operatingHours || "6:00 AM - 12:00 AM"}
                   </p>
                 </div>
               </div>

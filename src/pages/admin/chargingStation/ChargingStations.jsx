@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import {
   getAllStations,
-  toggleStationStatus,
+  activateStation,
+  deactivateStation,
 } from "../../../services/chargingstations.service";
 import Sidebar from "../../../components/Sidebar";
+import ConfirmationModal from "../../../components/ConfirmationModal";
 import { formatLocation } from "../../../utils/locationUtils";
 
 const ChargingStations = () => {
@@ -13,6 +15,13 @@ const ChargingStations = () => {
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    stationId: null,
+    stationName: "",
+    currentStatus: false,
+    isLoading: false,
+  });
 
   useEffect(() => {
     fetchStations();
@@ -38,15 +47,53 @@ const ChargingStations = () => {
     navigate(`/admin/stations/${stationId}/edit`);
   };
 
-  const handleToggleStatus = async (stationId, currentStatus) => {
+  const handleToggleStatus = (stationId, currentStatus, stationName) => {
+    setConfirmModal({
+      isOpen: true,
+      stationId,
+      stationName,
+      currentStatus,
+      isLoading: false,
+    });
+  };
+
+  const handleConfirmStatusChange = async () => {
+    const { stationId, currentStatus } = confirmModal;
+    const action = currentStatus ? "deactivate" : "activate";
+
+    setConfirmModal((prev) => ({ ...prev, isLoading: true }));
+
     try {
-      await toggleStationStatus(stationId, !currentStatus);
+      if (currentStatus) {
+        await deactivateStation(stationId);
+      } else {
+        await activateStation(stationId);
+      }
       // Refresh the stations list
-      fetchStations();
+      await fetchStations();
+      // Close modal
+      setConfirmModal({
+        isOpen: false,
+        stationId: null,
+        stationName: "",
+        currentStatus: false,
+        isLoading: false,
+      });
     } catch (error) {
-      setError(
-        error.response?.data?.message || "Failed to update station status"
-      );
+      setError(error.response?.data?.message || `Failed to ${action} station`);
+      setConfirmModal((prev) => ({ ...prev, isLoading: false }));
+    }
+  };
+
+  const handleCloseModal = () => {
+    if (!confirmModal.isLoading) {
+      setConfirmModal({
+        isOpen: false,
+        stationId: null,
+        stationName: "",
+        currentStatus: false,
+        isLoading: false,
+      });
     }
   };
 
@@ -83,7 +130,7 @@ const ChargingStations = () => {
                   </div>
                   <button
                     className="bg-[#ff7600] hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
-                    onClick={() => navigate("/admin/stations/new")}
+                    onClick={() => navigate("/admin/stations/add")}
                   >
                     Add New Station
                   </button>
@@ -154,13 +201,17 @@ const ChargingStations = () => {
                         <div className="flex gap-2">
                           <button
                             className="bg-[#0191fe] hover:bg-[#0367b4] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex-1"
-                            onClick={() => handleViewStation(station.id)}
+                            onClick={() =>
+                              handleViewStation(station._id || station.id)
+                            }
                           >
                             View Details
                           </button>
                           <button
                             className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex-1"
-                            onClick={() => handleUpdateStation(station.id)}
+                            onClick={() =>
+                              handleUpdateStation(station._id || station.id)
+                            }
                           >
                             Update
                           </button>
@@ -172,7 +223,11 @@ const ChargingStations = () => {
                               : "bg-green-600 hover:bg-green-700 text-white"
                           }`}
                           onClick={() =>
-                            handleToggleStatus(station.id, station.isActive)
+                            handleToggleStatus(
+                              station._id || station.id,
+                              station.isActive,
+                              station.name
+                            )
                           }
                         >
                           {station.isActive ? "Deactivate" : "Activate"}
@@ -186,6 +241,26 @@ const ChargingStations = () => {
           )}
         </div>
       </main>
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmModal.isOpen}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmStatusChange}
+        title={`${
+          confirmModal.currentStatus ? "Deactivate" : "Activate"
+        } Station`}
+        message={`Are you sure you want to ${
+          confirmModal.currentStatus ? "deactivate" : "activate"
+        } the station "${confirmModal.stationName}"?`}
+        confirmText={confirmModal.currentStatus ? "Deactivate" : "Activate"}
+        confirmButtonClass={
+          confirmModal.currentStatus
+            ? "bg-red-600 hover:bg-red-700"
+            : "bg-green-600 hover:bg-green-700"
+        }
+        isLoading={confirmModal.isLoading}
+      />
     </div>
   );
 };

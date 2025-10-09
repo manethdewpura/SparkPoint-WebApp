@@ -154,7 +154,7 @@ export default function Sidebar() {
                   onClick={() => navigate("/admin/stations")}
                   className="w-full text-left text-white hover:text-gray-300 py-2 px-3 rounded hover:bg-gray-700 transition-colors"
                 >
-                  Stations Management
+                  Charging Stations Management
                 </button>
                 <button
                   onClick={() => navigate("/admin/register")}

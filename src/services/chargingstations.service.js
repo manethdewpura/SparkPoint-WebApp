@@ -1,5 +1,15 @@
 import api from "./auth.service";
 
+export const createStation = async (stationData) => {
+  try {
+    const response = await api.post("/stations", stationData);
+    return response.data;
+  } catch (error) {
+    console.error("Create station failed:", error);
+    throw error;
+  }
+};
+
 export const getAllStations = async () => {
   try {
     const response = await api.get("/stations");
@@ -30,14 +40,22 @@ export const updateStation = async (stationId, stationData) => {
   }
 };
 
-export const toggleStationStatus = async (stationId, isActive) => {
+export const activateStation = async (stationId) => {
   try {
-    const response = await api.patch(`/stations/${stationId}/status`, {
-      isActive,
-    });
+    const response = await api.patch(`/stations/activate/${stationId}`);
     return response.data;
   } catch (error) {
-    console.error("Toggle station status failed:", error);
+    console.error("Activate station failed:", error);
+    throw error;
+  }
+};
+
+export const deactivateStation = async (stationId) => {
+  try {
+    const response = await api.patch(`/stations/deactivate/${stationId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Deactivate station failed:", error);
     throw error;
   }
 };
