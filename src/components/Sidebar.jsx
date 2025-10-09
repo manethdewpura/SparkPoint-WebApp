@@ -135,7 +135,10 @@ export default function Sidebar() {
 
             {userType === ROLES.ADMIN && (
               <>
-                <button className="w-full text-left text-white hover:text-gray-300 py-2 px-3 rounded hover:bg-gray-700 transition-colors">
+                <button
+                  onClick={() => navigate("/bookings")}
+                  className="w-full text-left text-white hover:text-gray-300 py-2 px-3 rounded hover:bg-gray-700 transition-colors"
+                >
                   Booking Management
                 </button>
                 <button className="w-full text-left text-white hover:text-gray-300 py-2 px-3 rounded hover:bg-gray-700 transition-colors">
@@ -168,7 +171,7 @@ export default function Sidebar() {
                   onClick={() => navigate("/bookings")}
                   className="w-full text-left text-white hover:text-gray-300 py-2 px-3 rounded hover:bg-gray-700 transition-colors"
                 >
-                  Bookings
+                  My Bookings
                 </button>
                 <button
                   onClick={() => navigate("/station-operator/my-station")}

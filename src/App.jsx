@@ -12,6 +12,7 @@ import StationOperators from "./pages/admin/stationOperator/StationOperators";
 import Profile from "./pages/Auth/Profile";
 import MyStation from "./pages/stationOperator/MyStation";
 import Bookings from "./pages/bookings/Bookings";
+import CreateBooking from "./pages/bookings/CreateBooking";
 
 function App() {
   return (
@@ -86,6 +87,14 @@ function App() {
         element={
           <ProtectedRoute allowedRoles={[1, 2]}>
             <Bookings />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bookings/create"
+        element={
+          <ProtectedRoute allowedRoles={[1]}>
+            <CreateBooking />
           </ProtectedRoute>
         }
       />

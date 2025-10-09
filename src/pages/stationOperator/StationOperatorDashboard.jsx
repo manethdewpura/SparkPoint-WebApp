@@ -3,7 +3,7 @@ import Sidebar from "../../components/Sidebar";
 export default function StationOperatorDashboard() {
   return (
     <div className="min-h-screen bg-[#051238]">
-      <Sidebar userType="Station Operator" />
+      <Sidebar />
 
       <main className="pt-16 px-6">
         <div className="max-w-7xl mx-auto">
