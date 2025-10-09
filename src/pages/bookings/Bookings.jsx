@@ -8,8 +8,14 @@ import {
 } from "../../services/booking.service";
 import Sidebar from "../../components/Sidebar";
 import BookingDetails from "./BookingDetails";
-import { HiClipboardList } from "react-icons/hi";
+import {
+  HiClipboardList,
+  HiCheckCircle,
+  HiExclamationCircle,
+  HiX,
+} from "react-icons/hi";
 import { ROLES } from "../../constants/roles";
+import { createToastUtils, initialToastState } from "../../utils/toastUtils";
 
 const Bookings = () => {
   const [bookingsData, setBookingsData] = useState([]);
@@ -29,9 +35,13 @@ const Bookings = () => {
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [cancelBookingData, setCancelBookingData] = useState(null);
   const [cancelLoading, setCancelLoading] = useState(false);
+  const [toast, setToast] = useState(initialToastState);
 
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
+
+  // Toast utility functions
+  const { showToast, hideToast } = createToastUtils(setToast);
 
   const fetchBookings = useCallback(async () => {
     try {
@@ -133,10 +143,10 @@ const Bookings = () => {
       // Close modal and reset state
       handleCloseStatusModal();
 
-      alert("Booking status updated successfully!");
+      showToast("Booking status updated successfully!", "success");
     } catch (error) {
       console.error("Error updating booking status:", error);
-      alert("Failed to update booking status. Please try again.");
+      showToast("Failed to update booking status. Please try again.", "error");
     } finally {
       setStatusUpdateLoading(false);
     }
@@ -167,8 +177,9 @@ const Bookings = () => {
     const timeCheck = checkTimeRestriction(booking.reservationTime);
 
     if (!timeCheck.allowed) {
-      alert(
-        "Bookings can only be cancelled at least 12 hours before the reservation time."
+      showToast(
+        "Bookings can only be cancelled at least 12 hours before the reservation time.",
+        "error"
       );
       return;
     }
@@ -195,15 +206,15 @@ const Bookings = () => {
       // Close modal and reset state
       handleCloseCancelModal();
 
-      alert("Booking cancelled successfully!");
+      showToast("Booking cancelled successfully!", "success");
     } catch (error) {
       console.error("Error cancelling booking:", error);
 
       // Check if it's the 12-hour restriction error
       if (error.response?.data?.message?.includes("12 hours")) {
-        alert(error.response.data.message);
+        showToast(error.response.data.message, "error");
       } else {
-        alert("Failed to cancel booking. Please try again.");
+        showToast("Failed to cancel booking. Please try again.", "error");
       }
     } finally {
       setCancelLoading(false);
@@ -713,6 +724,32 @@ const Bookings = () => {
                 Keep Booking
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast.show && (
+        <div className="fixed top-4 right-4 z-50">
+          <div
+            className={`flex items-center p-4 rounded-lg shadow-lg border ${
+              toast.type === "success"
+                ? "bg-green-900/90 border-green-700 text-green-300"
+                : "bg-red-900/90 border-red-700 text-red-300"
+            } backdrop-blur-sm`}
+          >
+            {toast.type === "success" ? (
+              <HiCheckCircle className="w-5 h-5 mr-3" />
+            ) : (
+              <HiExclamationCircle className="w-5 h-5 mr-3" />
+            )}
+            <span className="mr-3">{toast.message}</span>
+            <button
+              onClick={hideToast}
+              className="text-gray-300 hover:text-white transition-colors"
+            >
+              <HiX className="w-4 h-4" />
+            </button>
           </div>
         </div>
       )}

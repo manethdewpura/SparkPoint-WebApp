@@ -7,6 +7,7 @@ import {
   HiInformationCircle,
 } from "react-icons/hi";
 import EditBooking from "./EditBooking";
+import { ROLES } from "../../constants/roles";
 
 const BookingDetails = ({ booking, isOpen, onClose, user, onUpdate }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -178,7 +179,7 @@ const BookingDetails = ({ booking, isOpen, onClose, user, onUpdate }) => {
 
         {/* Footer */}
         <div className="flex gap-4 p-6 border-t border-gray-700">
-          {user?.roleId === 2 ? (
+          {user?.roleId === ROLES.STATION_OPERATOR ? (
             <>            </>
           ) : (
             <button

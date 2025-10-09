@@ -12,7 +12,10 @@ import {
   HiUser,
   HiX,
   HiArrowLeft,
+  HiCheckCircle,
+  HiExclamationCircle,
 } from "react-icons/hi";
+import { createToastUtils, initialToastState } from "../../utils/toastUtils";
 
 const CreateBooking = () => {
   const navigate = useNavigate();
@@ -24,6 +27,7 @@ const CreateBooking = () => {
   const [availability, setAvailability] = useState(null);
   const [loadingAvailability, setLoadingAvailability] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [toast, setToast] = useState(initialToastState);
 
   const [formData, setFormData] = useState({
     ownerNIC: "",
@@ -44,6 +48,9 @@ const CreateBooking = () => {
   useEffect(() => {
     fetchStations();
   }, []);
+
+  // Toast utility functions
+  const { showToast, hideToast } = createToastUtils(setToast);
 
   const fetchStations = async () => {
     try {
@@ -106,11 +113,11 @@ const CreateBooking = () => {
       setAvailability(response);
     } catch (err) {
       console.error("Error checking availability:", err);
-      setError("Failed to check availability");
+      showToast("Failed to check availability", "error");
     } finally {
       setLoadingAvailability(false);
     }
-  }, [selectedStation, formData.reservationDate]);
+  }, [selectedStation, formData.reservationDate, showToast]);
 
   useEffect(() => {
     if (formData.reservationDate && selectedStation) {
@@ -127,7 +134,7 @@ const CreateBooking = () => {
       !formData.reservationDate ||
       !formData.timeSlot
     ) {
-      alert("Please fill in all required fields");
+      showToast("Please fill in all required fields", "error");
       return;
     }
 
@@ -137,13 +144,14 @@ const CreateBooking = () => {
     );
 
     if (!selectedTimeSlot) {
-      alert("Please select a valid time slot");
+      showToast("Please select a valid time slot", "error");
       return;
     }
 
     if (formData.slotsRequested > selectedTimeSlot.availableSlots) {
-      alert(
-        `Only ${selectedTimeSlot.availableSlots} slots available for this time`
+      showToast(
+        `Only ${selectedTimeSlot.availableSlots} slots available for this time`,
+        "error"
       );
       return;
     }
@@ -159,11 +167,11 @@ const CreateBooking = () => {
       };
 
       await createBooking(bookingData);
-      alert("Booking created successfully!");
+      showToast("Booking created successfully!", "success");
       handleCloseModal();
     } catch (err) {
       console.error("Error creating booking:", err);
-      alert("Failed to create booking. Please try again.");
+      showToast("Failed to create booking. Please try again.", "error");
     } finally {
       setSubmitting(false);
     }
@@ -463,6 +471,32 @@ const CreateBooking = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast.show && (
+        <div className="fixed top-4 right-4 z-50">
+          <div
+            className={`flex items-center p-4 rounded-lg shadow-lg border ${
+              toast.type === "success"
+                ? "bg-green-900/90 border-green-700 text-green-300"
+                : "bg-red-900/90 border-red-700 text-red-300"
+            } backdrop-blur-sm`}
+          >
+            {toast.type === "success" ? (
+              <HiCheckCircle className="w-5 h-5 mr-3" />
+            ) : (
+              <HiExclamationCircle className="w-5 h-5 mr-3" />
+            )}
+            <span className="mr-3">{toast.message}</span>
+            <button
+              onClick={hideToast}
+              className="text-gray-300 hover:text-white transition-colors"
+            >
+              <HiX className="w-4 h-4" />
+            </button>
           </div>
         </div>
       )}
