@@ -13,6 +13,8 @@ import Profile from "./pages/Auth/Profile";
 import MyStation from "./pages/stationOperator/MyStation";
 import Bookings from "./pages/bookings/Bookings";
 import CreateBooking from "./pages/bookings/CreateBooking";
+import AddStation from "./pages/admin/chargingStation/AddStation";
+import EditStation from "./pages/admin/chargingStation/EditStation";
 
 function App() {
   return (
@@ -51,10 +53,26 @@ function App() {
         }
       />
       <Route
+        path="/admin/stations/add"
+        element={
+          <ProtectedRoute allowedRoles={[1]}>
+            <AddStation />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/admin/stations/:id"
         element={
           <ProtectedRoute allowedRoles={[1]}>
             <StationDetails />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/stations/:id/edit"
+        element={
+          <ProtectedRoute allowedRoles={[1]}>
+            <EditStation />
           </ProtectedRoute>
         }
       />

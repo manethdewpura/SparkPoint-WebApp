@@ -3,16 +3,32 @@ import { useNavigate } from "react-router-dom";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import {
   getAllStations,
-  toggleStationStatus,
+  activateStation,
+  deactivateStation,
 } from "../../../services/chargingstations.service";
 import Sidebar from "../../../components/Sidebar";
+import ConfirmationModal from "../../../components/ConfirmationModal";
+import Toast from "../../../components/Toast";
 import { formatLocation } from "../../../utils/locationUtils";
+import {
+  createToastUtils,
+  initialToastState,
+} from "../../../utils/toastUtils";
 
 const ChargingStations = () => {
   const navigate = useNavigate();
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [toast, setToast] = useState(initialToastState);
+  const { showToast } = createToastUtils(setToast);
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    stationId: null,
+    stationName: "",
+    currentStatus: false,
+    isLoading: false,
+  });
 
   useEffect(() => {
     fetchStations();
@@ -38,15 +54,78 @@ const ChargingStations = () => {
     navigate(`/admin/stations/${stationId}/edit`);
   };
 
-  const handleToggleStatus = async (stationId, currentStatus) => {
+  const handleToggleStatus = (stationId, currentStatus, stationName) => {
+    setConfirmModal({
+      isOpen: true,
+      stationId,
+      stationName,
+      currentStatus,
+      isLoading: false,
+    });
+  };
+
+  const handleConfirmStatusChange = async () => {
+    const { stationId, currentStatus, stationName } = confirmModal;
+    const action = currentStatus ? "deactivate" : "activate";
+    const actionPastTense = currentStatus ? "deactivated" : "activated";
+
+    setConfirmModal((prev) => ({ ...prev, isLoading: true }));
+
     try {
-      await toggleStationStatus(stationId, !currentStatus);
+      if (currentStatus) {
+        await deactivateStation(stationId);
+      } else {
+        await activateStation(stationId);
+      }
       // Refresh the stations list
-      fetchStations();
-    } catch (error) {
-      setError(
-        error.response?.data?.message || "Failed to update station status"
+      await fetchStations();
+      // Show success toast
+      showToast(
+        `Station "${stationName}" has been ${actionPastTense} successfully!`,
+        "success"
       );
+      // Close modal
+      setConfirmModal({
+        isOpen: false,
+        stationId: null,
+        stationName: "",
+        currentStatus: false,
+        isLoading: false,
+      });
+    } catch (error) {
+      let errorMessage;
+      
+      if (error.response?.status === 409) {
+        errorMessage = "Cannot deactivate because there are active bookings";
+      } else {
+        errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          error.message ||
+          `Failed to ${action} station`;
+      }
+      
+      setError(errorMessage);
+      showToast(errorMessage, "error");
+      setConfirmModal({
+        isOpen: false,
+        stationId: null,
+        stationName: "",
+        currentStatus: false,
+        isLoading: false,
+      });
+    }
+  };
+
+  const handleCloseModal = () => {
+    if (!confirmModal.isLoading) {
+      setConfirmModal({
+        isOpen: false,
+        stationId: null,
+        stationName: "",
+        currentStatus: false,
+        isLoading: false,
+      });
     }
   };
 
@@ -58,7 +137,30 @@ const ChargingStations = () => {
         <div className="max-w-7xl mx-auto">
           {error && (
             <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-              <p className="text-sm">{error}</p>
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1">
+                  <p className="font-medium text-base">{error}</p>
+                </div>
+                <button
+                  onClick={() => setError("")}
+                  className="text-red-700 hover:text-red-900 transition-colors flex-shrink-0"
+                  aria-label="Dismiss error"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
           )}
 
@@ -83,7 +185,7 @@ const ChargingStations = () => {
                   </div>
                   <button
                     className="bg-[#ff7600] hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
-                    onClick={() => navigate("/admin/stations/new")}
+                    onClick={() => navigate("/admin/stations/add")}
                   >
                     Add New Station
                   </button>
@@ -154,13 +256,17 @@ const ChargingStations = () => {
                         <div className="flex gap-2">
                           <button
                             className="bg-[#0191fe] hover:bg-[#0367b4] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex-1"
-                            onClick={() => handleViewStation(station.id)}
+                            onClick={() =>
+                              handleViewStation(station._id || station.id)
+                            }
                           >
                             View Details
                           </button>
                           <button
                             className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex-1"
-                            onClick={() => handleUpdateStation(station.id)}
+                            onClick={() =>
+                              handleUpdateStation(station._id || station.id)
+                            }
                           >
                             Update
                           </button>
@@ -172,7 +278,11 @@ const ChargingStations = () => {
                               : "bg-green-600 hover:bg-green-700 text-white"
                           }`}
                           onClick={() =>
-                            handleToggleStatus(station.id, station.isActive)
+                            handleToggleStatus(
+                              station._id || station.id,
+                              station.isActive,
+                              station.name
+                            )
                           }
                         >
                           {station.isActive ? "Deactivate" : "Activate"}
@@ -186,6 +296,32 @@ const ChargingStations = () => {
           )}
         </div>
       </main>
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmModal.isOpen}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmStatusChange}
+        title={`${
+          confirmModal.currentStatus ? "Deactivate" : "Activate"
+        } Station`}
+        message={`Are you sure you want to ${
+          confirmModal.currentStatus ? "deactivate" : "activate"
+        } the station "${confirmModal.stationName}"?`}
+        confirmText={confirmModal.currentStatus ? "Deactivate" : "Activate"}
+        confirmButtonClass={
+          confirmModal.currentStatus
+            ? "bg-red-600 hover:bg-red-700"
+            : "bg-green-600 hover:bg-green-700"
+        }
+        isLoading={confirmModal.isLoading}
+      />
+
+      {/* Toast Notification */}
+      <Toast
+        toast={toast}
+        onClose={() => setToast({ show: false, message: "", type: "" })}
+      />
     </div>
   );
 };
