@@ -8,13 +8,20 @@ import {
 } from "../../../services/chargingstations.service";
 import Sidebar from "../../../components/Sidebar";
 import ConfirmationModal from "../../../components/ConfirmationModal";
+import Toast from "../../../components/Toast";
 import { formatLocation } from "../../../utils/locationUtils";
+import {
+  createToastUtils,
+  initialToastState,
+} from "../../../utils/toastUtils";
 
 const ChargingStations = () => {
   const navigate = useNavigate();
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [toast, setToast] = useState(initialToastState);
+  const { showToast } = createToastUtils(setToast);
   const [confirmModal, setConfirmModal] = useState({
     isOpen: false,
     stationId: null,
@@ -58,8 +65,9 @@ const ChargingStations = () => {
   };
 
   const handleConfirmStatusChange = async () => {
-    const { stationId, currentStatus } = confirmModal;
+    const { stationId, currentStatus, stationName } = confirmModal;
     const action = currentStatus ? "deactivate" : "activate";
+    const actionPastTense = currentStatus ? "deactivated" : "activated";
 
     setConfirmModal((prev) => ({ ...prev, isLoading: true }));
 
@@ -71,6 +79,11 @@ const ChargingStations = () => {
       }
       // Refresh the stations list
       await fetchStations();
+      // Show success toast
+      showToast(
+        `Station "${stationName}" has been ${actionPastTense} successfully!`,
+        "success"
+      );
       // Close modal
       setConfirmModal({
         isOpen: false,
@@ -80,8 +93,27 @@ const ChargingStations = () => {
         isLoading: false,
       });
     } catch (error) {
-      setError(error.response?.data?.message || `Failed to ${action} station`);
-      setConfirmModal((prev) => ({ ...prev, isLoading: false }));
+      let errorMessage;
+      
+      if (error.response?.status === 409) {
+        errorMessage = "Cannot deactivate because there are active bookings";
+      } else {
+        errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          error.message ||
+          `Failed to ${action} station`;
+      }
+      
+      setError(errorMessage);
+      showToast(errorMessage, "error");
+      setConfirmModal({
+        isOpen: false,
+        stationId: null,
+        stationName: "",
+        currentStatus: false,
+        isLoading: false,
+      });
     }
   };
 
@@ -105,7 +137,30 @@ const ChargingStations = () => {
         <div className="max-w-7xl mx-auto">
           {error && (
             <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-              <p className="text-sm">{error}</p>
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1">
+                  <p className="font-medium text-base">{error}</p>
+                </div>
+                <button
+                  onClick={() => setError("")}
+                  className="text-red-700 hover:text-red-900 transition-colors flex-shrink-0"
+                  aria-label="Dismiss error"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
           )}
 
@@ -260,6 +315,12 @@ const ChargingStations = () => {
             : "bg-green-600 hover:bg-green-700"
         }
         isLoading={confirmModal.isLoading}
+      />
+
+      {/* Toast Notification */}
+      <Toast
+        toast={toast}
+        onClose={() => setToast({ show: false, message: "", type: "" })}
       />
     </div>
   );

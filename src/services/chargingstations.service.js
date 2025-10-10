@@ -32,7 +32,7 @@ export const getStationById = async (stationId) => {
 
 export const updateStation = async (stationId, stationData) => {
   try {
-    const response = await api.put(`/stations/${stationId}`, stationData);
+    const response = await api.patch(`/stations/${stationId}`, stationData);
     return response.data;
   } catch (error) {
     console.error("Update station failed:", error);
@@ -56,6 +56,18 @@ export const deactivateStation = async (stationId) => {
     return response.data;
   } catch (error) {
     console.error("Deactivate station failed:", error);
+    throw error;
+  }
+};
+
+export const updateStationSlots = async (stationId, totalSlots) => {
+  try {
+    const response = await api.patch(`/stations/${stationId}/slots`, {
+      TotalSlots: totalSlots,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Update station slots failed:", error);
     throw error;
   }
 };
