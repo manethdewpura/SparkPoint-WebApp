@@ -3,7 +3,7 @@ import {
   updateBooking,
   checkBookingAvailability,
 } from "../../services/booking.service";
-import { HiX, HiSave, HiLocationMarker } from "react-icons/hi";
+import { HiX, HiLocationMarker } from "react-icons/hi";
 
 const EditBooking = ({ booking, isOpen, onClose, onUpdate }) => {
   const [formData, setFormData] = useState({
@@ -339,13 +339,6 @@ const EditBooking = ({ booking, isOpen, onClose, onUpdate }) => {
           {/* Submit Button */}
           <div className="flex gap-4 pt-4">
             <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 py-3 px-4 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
               type="submit"
               disabled={
                 submitting ||
@@ -362,10 +355,16 @@ const EditBooking = ({ booking, isOpen, onClose, onUpdate }) => {
                 </>
               ) : (
                 <>
-                  <HiSave className="w-4 h-4" />
                   Update Booking
                 </>
               )}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 py-3 px-4 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors"
+            >
+              Cancel
             </button>
           </div>
         </form>

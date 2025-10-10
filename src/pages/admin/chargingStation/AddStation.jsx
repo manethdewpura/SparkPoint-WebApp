@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { FiArrowLeft } from "react-icons/fi";
 import { createStation } from "../../../services/chargingstations.service";
 import Sidebar from "../../../components/Sidebar";
 
@@ -80,13 +81,21 @@ const AddStation = () => {
 
       <main className="pt-16 pb-8 px-6">
         <div className="max-w-4xl mx-auto">
-          <div className="text-white mb-8">
-            <h1 className="text-4xl font-bold mb-4">
-              Add New Charging Station
-            </h1>
-            <p className="text-gray-300 text-lg">
-              Register a new charging station in the system
-            </p>
+          <div className="flex items-center gap-4 text-white mb-8">
+            <button
+              onClick={handleCancel}
+              className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg transition-colors duration-200"
+            >
+              <FiArrowLeft className="h-5 w-5" />
+            </button>
+            <div>
+              <h1 className="text-4xl font-bold mb-4">
+                Add New Charging Station
+              </h1>
+              <p className="text-gray-300 text-lg">
+                Register a new charging station in the system
+              </p>
+            </div>
           </div>
 
           {error && (
