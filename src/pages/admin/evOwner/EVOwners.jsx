@@ -288,7 +288,6 @@ const EVOwners = () => {
               onClick={() => navigate("/admin/ev-owners/register")}
               className="bg-[#ff7600] hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2"
             >
-              <FaPlus className="h-5 w-5" />
               Register EV Owner
             </button>
           </div>
