@@ -15,6 +15,8 @@ import Bookings from "./pages/bookings/Bookings";
 import CreateBooking from "./pages/bookings/CreateBooking";
 import AddStation from "./pages/admin/chargingStation/AddStation";
 import EditStation from "./pages/admin/chargingStation/EditStation";
+import EVOwners from "./pages/admin/evOwner/EVOwners";
+import RegisterEVOwner from "./pages/admin/evOwner/RegisterEVOwner";
 
 function App() {
   return (
@@ -89,6 +91,22 @@ function App() {
         element={
           <ProtectedRoute allowedRoles={[1]}>
             <StationOperators />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/ev-owners"
+        element={
+          <ProtectedRoute allowedRoles={[1]}>
+            <EVOwners />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/ev-owners/register"
+        element={
+          <ProtectedRoute allowedRoles={[1]}>
+            <RegisterEVOwner />
           </ProtectedRoute>
         }
       />

@@ -63,3 +63,31 @@ export const getUserProfile = async () => {
     }
   }
 };
+
+export const updateUserProfile = async (profileData) => {
+  try {
+    const response = await api.patch("/users/profile", {
+      Username: profileData.Username,
+      Email: profileData.Email,
+      FirstName: profileData.FirstName,
+      LastName: profileData.LastName,
+      Password: profileData.Password,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update user profile:", error);
+
+    if (error.response?.status === 401) {
+      throw new Error("Authentication failed. Please log in again.");
+    } else if (error.response?.status === 403) {
+      throw new Error("Access denied.");
+    } else {
+      throw new Error(
+        error.response?.data?.message ||
+          error.response?.data ||
+          error.message ||
+          "Failed to update profile"
+      );
+    }
+  }
+};
