@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { getStationById } from "../../services/chargingstations.service";
+import { getStationById, updateStationSlots } from "../../services/chargingstations.service";
 import Sidebar from "../../components/Sidebar";
+import Toast from "../../components/Toast";
 import {
   HiLocationMarker,
   HiLightningBolt,
@@ -11,12 +12,19 @@ import {
   HiUsers,
   HiShieldCheck,
   HiCalendar,
+  HiPencil,
+  HiX,
+  HiCheck,
 } from "react-icons/hi";
 
 const MyStation = () => {
   const [stationData, setStationData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isEditingSlots, setIsEditingSlots] = useState(false);
+  const [newTotalSlots, setNewTotalSlots] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   const user = useSelector((state) => state.auth.user);
 
@@ -41,6 +49,56 @@ const MyStation = () => {
 
     fetchStationData();
   }, [user?.chargingStationId]);
+
+  const showToast = (message, type) => {
+    setToast({ show: true, message, type });
+  };
+
+  const handleEditSlots = () => {
+    setNewTotalSlots(stationData.station.totalSlots.toString());
+    setIsEditingSlots(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditingSlots(false);
+    setNewTotalSlots("");
+  };
+
+  const handleUpdateSlots = async () => {
+    const slotsValue = parseInt(newTotalSlots);
+    
+    if (isNaN(slotsValue) || slotsValue < 1 || slotsValue > 100) {
+      showToast("Total slots must be between 1 and 100", "error");
+      return;
+    }
+
+    if (slotsValue === stationData.station.totalSlots) {
+      showToast("No changes to update", "info");
+      handleCancelEdit();
+      return;
+    }
+
+    try {
+      setIsUpdating(true);
+      await updateStationSlots(stationData.station.id, slotsValue);
+      
+      // Refresh station data
+      const response = await getStationById(user.chargingStationId);
+      setStationData(response);
+      
+      showToast("Station slots updated successfully!", "success");
+      setIsEditingSlots(false);
+      setNewTotalSlots("");
+    } catch (err) {
+      console.error("Error updating slots:", err);
+      showToast(
+        err.response?.data?.message || "Failed to update station slots",
+        "error"
+      );
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -80,6 +138,12 @@ const MyStation = () => {
   return (
     <div className="min-h-screen bg-[#1a2955]">
       <Sidebar />
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        show={toast.show}
+        onClose={() => setToast({ ...toast, show: false })}
+      />
 
       <main className="pt-16 px-6">
         <div className="max-w-7xl mx-auto">
@@ -159,10 +223,21 @@ const MyStation = () => {
 
               {/* Station Details */}
               <div className="bg-gray-700 rounded-lg p-6 border border-gray-600">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-                  <HiLightningBolt className="w-5 h-5 mr-2 text-gray-300" />
-                  Station Information
-                </h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-white flex items-center">
+                    <HiLightningBolt className="w-5 h-5 mr-2 text-gray-300" />
+                    Station Information
+                  </h3>
+                  {!isEditingSlots && (
+                    <button
+                      onClick={handleEditSlots}
+                      className="flex items-center px-3 py-1.5 bg-[#ff7600] text-white rounded-lg hover:bg-[#e66a00] transition-colors text-sm font-medium"
+                    >
+                      <HiPencil className="w-4 h-4 mr-1" />
+                      Update Slots
+                    </button>
+                  )}
+                </div>
                 <div className="space-y-3">
                   <div>
                     <p className="text-sm text-gray-400">Charging Type</p>
@@ -170,20 +245,58 @@ const MyStation = () => {
                       {station.type}
                     </span>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-400">Total Slots</p>
-                      <p className="text-2xl font-bold text-white">
-                        {station.totalSlots}
+                  
+                  {isEditingSlots ? (
+                    <div className="bg-gray-600 rounded-lg p-4 border-2 border-[#ff7600]">
+                      <p className="text-sm text-gray-300 mb-2 font-medium">
+                        Update Total Slots
+                      </p>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="number"
+                          min="1"
+                          max="100"
+                          value={newTotalSlots}
+                          onChange={(e) => setNewTotalSlots(e.target.value)}
+                          className="flex-1 px-3 py-2 bg-gray-700 border border-gray-500 rounded-lg text-white focus:outline-none focus:border-[#ff7600]"
+                          placeholder="Enter total slots (1-100)"
+                          disabled={isUpdating}
+                        />
+                        <button
+                          onClick={handleUpdateSlots}
+                          disabled={isUpdating}
+                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <HiCheck className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={handleCancelEdit}
+                          disabled={isUpdating}
+                          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <HiX className="w-5 h-5" />
+                        </button>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-2">
+                        Current: {station.totalSlots} slots | Available: {station.availableSlots} slots
                       </p>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-400">Available</p>
-                      <p className="text-2xl font-bold text-green-400">
-                        {station.availableSlots}
-                      </p>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-400">Total Slots</p>
+                        <p className="text-2xl font-bold text-white">
+                          {station.totalSlots}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-400">Available</p>
+                        <p className="text-2xl font-bold text-green-400">
+                          {station.availableSlots}
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
 
