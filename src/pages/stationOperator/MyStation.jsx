@@ -10,9 +10,7 @@ import {
   HiMail,
   HiUserGroup,
   HiUsers,
-  HiShieldCheck,
   HiCalendar,
-  HiPencil,
   HiX,
   HiCheck,
 } from "react-icons/hi";
@@ -231,9 +229,8 @@ const MyStation = () => {
                   {!isEditingSlots && (
                     <button
                       onClick={handleEditSlots}
-                      className="flex items-center px-3 py-1.5 bg-[#ff7600] text-white rounded-lg hover:bg-[#e66a00] transition-colors text-sm font-medium"
+                      className="flex items-center px-3 py-1.5 bg-[#ff7600] text-white rounded-lg hover:bg-[#d86603] transition-colors text-sm font-medium"
                     >
-                      <HiPencil className="w-4 h-4 mr-1" />
                       Update Slots
                     </button>
                   )}
@@ -241,9 +238,9 @@ const MyStation = () => {
                 <div className="space-y-3">
                   <div>
                     <p className="text-sm text-gray-400">Charging Type</p>
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#ff7600] text-white">
+                    <p className="text-2xl font-bold text-white">
                       {station.type}
-                    </span>
+                    </p>
                   </div>
                   
                   {isEditingSlots ? (
@@ -342,7 +339,7 @@ const MyStation = () => {
           <div className="bg-gray-800 rounded-xl shadow-lg border border-gray-700 p-8">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-white">Station Users</h2>
+                <h2 className="text-2xl font-bold text-white">Station Operator</h2>
                 <p className="text-gray-300 mt-1">
                   {stationUsers.length} users assigned to this station
                 </p>
@@ -365,10 +362,9 @@ const MyStation = () => {
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-[#ff7600] rounded-full flex items-center justify-center">
+                        <div className="w-10 h-10 bg-[#0191fe] rounded-full flex items-center justify-center">
                           <span className="text-white font-semibold text-sm">
                             {user.firstName[0]}
-                            {user.lastName[0]}
                           </span>
                         </div>
                         <div>

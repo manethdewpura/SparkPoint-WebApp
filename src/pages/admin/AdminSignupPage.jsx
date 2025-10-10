@@ -97,7 +97,7 @@ const AdminSignupPage = () => {
             <div className="bg-gray-800 rounded-lg shadow-lg p-8 border border-gray-700">
               <div className="mb-6">
                 <h1 className="text-3xl font-bold text-white mb-2">
-                  Register New Administrator
+                  Admin Registration
                 </h1>
                 <p className="text-gray-300">
                   Add a new administrator to the SparkPoint system

@@ -164,10 +164,10 @@ const StationOperators = () => {
     <div className="min-h-screen bg-[#1a2955]">
       <Sidebar />
 
-      <main className="pt-16 pb-8 px-6">
+      <main className="py-16 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center text-white py-8">
-            <h1 className="text-4xl font-bold mb-4">Station Operators</h1>
+            <h1 className="text-4xl font-bold mb-4">Station Operators Management</h1>
             <p className="text-gray-300 text-lg">
               Manage and view all registered station operators
             </p>
@@ -498,28 +498,9 @@ const StationOperators = () => {
                             year: "numeric",
                             month: "long",
                             day: "numeric",
-                            // hour: "2-digit",
-                            // minute: "2-digit",
                           })}
                         </p>
                       </div>
-
-                      {/* <div>
-                        <label className="text-sm font-medium text-gray-500 uppercase tracking-wider">
-                          Last Updated
-                        </label>
-                        <p className="mt-1 text-gray-900">
-                          {new Date(
-                            selectedOperator.updatedAt
-                          ).toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </p>
-                      </div> */}
                     </div>
                   </div>
 
@@ -575,10 +556,8 @@ const StationOperators = () => {
                             <label className="text-sm font-medium text-gray-500 uppercase tracking-wider">
                               Station Type
                             </label>
-                            <p className="mt-1">
-                              <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
-                                {selectedOperator.chargingStation.type}
-                              </span>
+                            <p className="mt-1 text-gray-900 text-lg font-semibold">
+                              {selectedOperator.chargingStation.type}
                             </p>
                           </div>
 

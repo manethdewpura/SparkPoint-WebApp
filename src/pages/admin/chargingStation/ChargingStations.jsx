@@ -10,10 +10,7 @@ import Sidebar from "../../../components/Sidebar";
 import ConfirmationModal from "../../../components/ConfirmationModal";
 import Toast from "../../../components/Toast";
 import { formatLocation } from "../../../utils/locationUtils";
-import {
-  createToastUtils,
-  initialToastState,
-} from "../../../utils/toastUtils";
+import { createToastUtils, initialToastState } from "../../../utils/toastUtils";
 
 const ChargingStations = () => {
   const navigate = useNavigate();
@@ -94,7 +91,7 @@ const ChargingStations = () => {
       });
     } catch (error) {
       let errorMessage;
-      
+
       if (error.response?.status === 409) {
         errorMessage = "Cannot deactivate because there are active bookings";
       } else {
@@ -104,7 +101,7 @@ const ChargingStations = () => {
           error.message ||
           `Failed to ${action} station`;
       }
-      
+
       setError(errorMessage);
       showToast(errorMessage, "error");
       setConfirmModal({
@@ -133,7 +130,7 @@ const ChargingStations = () => {
     <div className="min-h-screen bg-[#1a2955]">
       <Sidebar />
 
-      <main className="pt-16 pb-8 px-6">
+      <main className="py-16 px-6">
         <div className="max-w-7xl mx-auto">
           {error && (
             <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
@@ -173,23 +170,23 @@ const ChargingStations = () => {
             </div>
           ) : (
             <>
-              <div className="text-center text-white">
-                <div className="flex justify-between items-center mb-8">
-                  <div className="text-left">
-                    <h1 className="text-4xl font-bold mb-4">
-                      Charging Stations Management
-                    </h1>
-                    <p className="text-gray-300 text-lg">
-                      Manage and monitor all charging stations in the system
-                    </p>
-                  </div>
-                  <button
-                    className="bg-[#ff7600] hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
-                    onClick={() => navigate("/admin/stations/add")}
-                  >
-                    Add New Station
-                  </button>
-                </div>
+              <div className="text-center text-white py-8">
+                <h1 className="text-4xl font-bold mb-4">
+                  Charging Stations Management
+                </h1>
+                <p className="text-gray-300 text-lg">
+                  Manage and monitor all charging stations in the system
+                </p>
+              </div>
+
+              {/* Add Station Button */}
+              <div className="mb-6">
+                <button
+                  className="bg-[#ff7600] hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
+                  onClick={() => navigate("/admin/stations/add")}
+                >
+                  Add New Station
+                </button>
               </div>
 
               {stations.length === 0 ? (

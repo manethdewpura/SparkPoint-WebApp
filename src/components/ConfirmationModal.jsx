@@ -22,19 +22,19 @@ const ConfirmationModal = ({
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
       onClick={handleOverlayClick}
     >
-      <div className="bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 border border-gray-700">
+      <div className="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl p-6 max-w-md w-full mx-4 border border-white/20">
         <div className="flex items-center gap-3 mb-4">
           <div className="flex-shrink-0">
-            <AiOutlineWarning className="h-6 w-6 text-yellow-400" />
+            <AiOutlineWarning className="h-6 w-6 text-yellow-500" />
           </div>
-          <h3 className="text-lg font-semibold text-white">{title}</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
         </div>
 
         <div className="mb-6">
-          <p className="text-gray-300 text-sm">{message}</p>
+          <p className="text-gray-600 text-sm">{message}</p>
         </div>
 
         <div className="flex gap-3 justify-end">
@@ -42,7 +42,7 @@ const ConfirmationModal = ({
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-600 disabled:opacity-50 rounded-lg transition-colors duration-200"
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 disabled:bg-gray-50 disabled:opacity-50 rounded-lg transition-colors duration-200"
           >
             {cancelText}
           </button>

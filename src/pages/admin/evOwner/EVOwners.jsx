@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FaEye,
   FaEdit,
@@ -9,6 +10,7 @@ import {
   FaTimes as FaClear,
   FaUserCheck,
   FaUserSlash,
+  FaPlus,
 } from "react-icons/fa";
 import {
   getAllEVOwners,
@@ -21,6 +23,7 @@ import Sidebar from "../../../components/Sidebar";
 import ConfirmationModal from "../../../components/ConfirmationModal";
 
 const EVOwners = () => {
+  const navigate = useNavigate();
   const [owners, setOwners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -226,10 +229,10 @@ const EVOwners = () => {
     <div className="min-h-screen bg-[#1a2955]">
       <Sidebar />
 
-      <main className="pt-16 pb-8 px-4">
+      <main className="py-16 px-4">
         <div className="max-w-[1320px] mx-auto">
           <div className="text-center text-white py-8">
-            <h1 className="text-4xl font-bold mb-4">EV Owners</h1>
+            <h1 className="text-4xl font-bold mb-4">EV Owners Management</h1>
             <p className="text-gray-300 text-lg">
               Manage and view all registered EV owners
             </p>
@@ -281,6 +284,13 @@ const EVOwners = () => {
                 </p>
               )}
             </div>
+            <button
+              onClick={() => navigate("/admin/ev-owners/register")}
+              className="bg-[#ff7600] hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2"
+            >
+              <FaPlus className="h-5 w-5" />
+              Register EV Owner
+            </button>
           </div>
 
           {error && (
@@ -594,13 +604,14 @@ const EVOwners = () => {
                           Registered At
                         </label>
                         <p className="mt-1 text-gray-900">
-                          {new Date(
-                            selectedOwner.createdAt
-                          ).toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })}
+                          {new Date(selectedOwner.createdAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            }
+                          )}
                         </p>
                       </div>
                     </div>
@@ -839,4 +850,3 @@ const EVOwners = () => {
 };
 
 export default EVOwners;
-

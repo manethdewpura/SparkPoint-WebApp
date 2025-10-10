@@ -139,19 +139,19 @@ export default function Sidebar() {
                   onClick={() => navigate("/bookings")}
                   className="w-full text-left text-white hover:text-gray-300 py-2 px-3 rounded hover:bg-gray-700 transition-colors"
                 >
-                  Booking Management
+                  Bookings Management
                 </button>
                 <button
                   onClick={() => navigate("/admin/ev-owners")}
                   className="w-full text-left text-white hover:text-gray-300 py-2 px-3 rounded hover:bg-gray-700 transition-colors"
                 >
-                  EV Owner Management
+                  EV Owners Management
                 </button>
                 <button
                   onClick={() => navigate("/admin/station-operators")}
                   className="w-full text-left text-white hover:text-gray-300 py-2 px-3 rounded hover:bg-gray-700 transition-colors"
                 >
-                  Station Operator Management
+                  Station Operators Management
                 </button>
                 <button
                   onClick={() => navigate("/admin/stations")}
